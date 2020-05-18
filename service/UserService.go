@@ -17,7 +17,7 @@ func Login(c *gin.Context) {
 	}
 }
 
-func GetAllUsers(c *gin.Context)  {
+func GetAllUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": controller.GetAllUsers()})
 }
 
@@ -30,5 +30,17 @@ func UpdateUser(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK})
 	} else {
 		c.JSON(http.StatusBadGateway, gin.H{"status": http.StatusBadGateway})
+	}
+}
+
+func UpdatePassword(c *gin.Context) {
+	var username string
+	if GetTokenUser(c, &username) {
+		password := c.PostForm("password")
+		if controller.UpdatePassword(username, password) {
+			c.JSON(http.StatusAccepted, gin.H{"status": http.StatusAccepted})
+		} else {
+			c.JSON(http.StatusForbidden, gin.H{"status": http.StatusForbidden})
+		}
 	}
 }

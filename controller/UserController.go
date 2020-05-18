@@ -33,3 +33,14 @@ func UpdateUser(user repository.User) bool {
 		return true
 	}
 }
+
+func UpdatePassword(username string, password string) bool {
+	var user repository.User
+	user.Name = username
+	err := Db.Model(&user).Update("password", password)
+	if err != nil {
+		return true
+	} else {
+		return false
+	}
+}

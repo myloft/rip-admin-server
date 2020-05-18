@@ -67,8 +67,24 @@ func AddNewAnime(c *gin.Context) {
 		anime.Owner = username
 		anime.Official_name = c.PostForm("Official_name")
 		anime.Zh_name = c.PostForm("Zh_name")
-		anime.Status, _ = strconv.Atoi(c.PostForm("Status"))
+		anime.Status, _ = strconv.Atoi(c.DefaultPostForm("Status", "1"))
 		controller.AddNewAnime(&anime)
+		c.JSON(http.StatusAccepted, gin.H{"status": http.StatusAccepted})
+	} else {
+		c.JSON(http.StatusForbidden, gin.H{"status": http.StatusForbidden})
+	}
+}
+
+func UpdateAnime(c *gin.Context) {
+	var anime repository.Anime
+	var username string
+	if GetTokenUser(c, &username) {
+		anime.Anid, _ = strconv.Atoi(c.PostForm("Anid"))
+		anime.Owner = username
+		anime.Official_name = c.PostForm("Official_name")
+		anime.Zh_name = c.PostForm("Zh_name")
+		anime.Status, _ = strconv.Atoi(c.DefaultPostForm("Status", "1"))
+		controller.UpdateAnime(&anime)
 		c.JSON(http.StatusAccepted, gin.H{"status": http.StatusAccepted})
 	} else {
 		c.JSON(http.StatusForbidden, gin.H{"status": http.StatusForbidden})
