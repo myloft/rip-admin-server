@@ -4,11 +4,20 @@ import (
 	"main/repository"
 )
 
-func GetAllAnimes(animes *[]repository.Anime, query string, pagenum int, pagesize int, status string) bool {
-	if pagenum != 0 && pagesize != 0 {
-		Db.Debug().Order("Created_At desc").Limit(pagesize).Offset((pagenum-1)*pagesize).Where("anid = ? OR zh_name like ?", query, "%"+query+"%").Find(animes).RecordNotFound()
+func GetAllAnimes(animes *[]repository.Anime, query string, pagenum int, pagesize int, status int) bool {
+	var total int
+	if status != 0 {
+		if pagenum != 0 && pagesize != 0 {
+			Db.Debug().Order("Created_At desc").Limit(pagesize).Offset((pagenum-1)*pagesize).Where("anid = ? OR zh_name like ? AND status = ?", query, "%"+query+"%", status).Find(animes).Count(&total).RecordNotFound()
+		} else {
+			Db.Debug().Order("Created_At desc").Where("anid = ? OR zh_name like ? status = ?", query, "%"+query+"%", status).Find(animes).Count(&total).RecordNotFound()
+		}
 	} else {
-		Db.Debug().Order("Created_At desc").Where("anid = ? OR zh_name like ?", query, "%"+query+"%").Find(animes).RecordNotFound()
+		if pagenum != 0 && pagesize != 0 {
+			Db.Debug().Order("Created_At desc").Limit(pagesize).Offset((pagenum-1)*pagesize).Where("anid = ? OR zh_name like ?", query, "%"+query+"%").Find(animes).Count(&total).RecordNotFound()
+		} else {
+			Db.Debug().Order("Created_At desc").Where("anid = ? OR zh_name like ?", query, "%"+query+"%").Find(animes).Count(&total).RecordNotFound()
+		}
 	}
 	if Db.Model(animes).RecordNotFound() {
 		return false
@@ -32,12 +41,22 @@ func GetSingleAnime(anid string, anime *repository.Anime) bool {
 }
 
 func GetUserAnimes(animes *[]repository.Anime, username string, query string, pagenum int, pagesize int, status int) bool {
-	if pagenum != 0 && pagesize != 0 {
-		Db.Order("Created_At desc").Limit(pagesize).Offset((pagenum-1)*pagesize).Where("owner = ? AND (anid = ? OR zh_name like ?)", username, query, "%"+query+"%").Find(animes).RecordNotFound()
-	} else {
-		if Db.Order("Created_At desc").Where("owner = ? AND (anid = ? OR zh_name like ?)", username, query, "%"+query+"%").Find(animes).RecordNotFound() {
+	if status != 0 {
+		if pagenum != 0 && pagesize != 0 {
+			Db.Order("Created_At desc").Limit(pagesize).Offset((pagenum-1)*pagesize).Where("owner = ? AND (anid = ? OR zh_name like ?) AND status = ?", username, query, "%"+query+"%", status).Find(animes).RecordNotFound()
+		} else {
+			if Db.Order("Created_At desc").Where("owner = ? AND (anid = ? OR zh_name like ?) AND status = ?", username, query, "%"+query+"%", status).Find(animes).RecordNotFound() {
+			}
+			return false
 		}
-		return false
+	} else {
+		if pagenum != 0 && pagesize != 0 {
+			Db.Order("Created_At desc").Limit(pagesize).Offset((pagenum-1)*pagesize).Where("owner = ? AND (anid = ? OR zh_name like ?)", username, query, "%"+query+"%").Find(animes).RecordNotFound()
+		} else {
+			if Db.Order("Created_At desc").Where("owner = ? AND (anid = ? OR zh_name like ?)", username, query, "%"+query+"%").Find(animes).RecordNotFound() {
+			}
+			return false
+		}
 	}
 	if Db.Model(animes).RecordNotFound() {
 		return false
