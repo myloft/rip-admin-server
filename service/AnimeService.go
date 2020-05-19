@@ -18,7 +18,7 @@ func GetAllAnimes(c *gin.Context) {
 		query := c.Query("query")
 		pagenum, _ := strconv.Atoi(c.Query("pagenum"))
 		pagesize, _ := strconv.Atoi(c.Query("pagesize"))
-		status := c.Query("status")
+		status, _ := strconv.Atoi(c.Query("status"))
 		if controller.GetAllAnimes(&animes, query, pagenum, pagesize, status) {
 			c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": animes, "total": controller.GetAllAnimesNum()})
 		} else {
