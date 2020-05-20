@@ -86,18 +86,6 @@ func UpdateAnime(anime *repository.Anime) {
 	Db.Model(&anime).Update(&anime)
 }
 
-//func UpdateAnime(c *gin.Context) {
-//	var anime repository.Anime
-//	anime.Anid, _ = strconv.Atoi(c.PostForm("Anid"))
-//	anime.Owner = c.PostForm("Owner")
-//	anime.Official_name = c.PostForm("Official_name")
-//	anime.Zh_name = c.PostForm("Zh_name")
-//	anime.Status, _ = strconv.Atoi(c.PostForm("Status"))
-//	Db.Model(&anime).Updates(anime)
-//	Db.Where("anid = ?", c.Param("anid")).Find(&anime)
-//	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": anime})
-//}
-
 func DeleteAnime(anime *repository.Anime) {
 	Db.Delete(anime)
 }

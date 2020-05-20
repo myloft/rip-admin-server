@@ -104,6 +104,19 @@ func DeleteAnime(c *gin.Context) {
 	}
 }
 
+func SetPublished(c *gin.Context) {
+	var anime repository.Anime
+	var username string
+	if GetTokenUser(c, &username) {
+		anime.Anid, _ = strconv.Atoi(c.Param("anid"))
+		anime.Status = 2
+		controller.UpdateAnime(&anime)
+		c.JSON(http.StatusAccepted, gin.H{"status": http.StatusAccepted})
+	} else {
+		c.JSON(http.StatusForbidden, gin.H{"status": http.StatusForbidden})
+	}
+}
+
 type Aidb struct {
 	Official_name string
 	Zh_name       string
