@@ -129,7 +129,7 @@ func SetPublished(c *gin.Context) {
 		} else {
 			if GetPublishedInfo(&anime) {
 				controller.AddNewAnime(&anime)
-				c.JSON(http.StatusCreated, gin.H{"status": http.StatusAccepted})
+				c.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated})
 			} else {
 				c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusAccepted})
 			}
