@@ -108,9 +108,9 @@ func DeleteAnime(c *gin.Context) {
 
 func GetPublishedInfo(anime *repository.Anime) bool {
 	resp, err := http.Get("https://snow.hacg.top/api.php?anid=" + strconv.Itoa(anime.Anid))
-	err_json := json.NewDecoder(resp.Body).Decode(anime)
+	json.NewDecoder(resp.Body).Decode(anime)
 	anime.Status = 2
-	if err != nil || err_json != nil {
+	if err != nil {
 		return false
 	} else {
 		return true
