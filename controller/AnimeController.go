@@ -32,8 +32,8 @@ func GetAllAnimesNum() int {
 	return total
 }
 
-func GetSingleAnime(anid string, anime *repository.Anime) bool {
-	if Db.Where("anid = ?", anid).Find(&anime).RecordNotFound() {
+func GetSingleAnime(anime *repository.Anime) bool {
+	if Db.Where("anid = ?", anime.Anid).Find(&anime).RecordNotFound() {
 		return false
 	} else {
 		return true
@@ -72,14 +72,7 @@ func GetUserAnimesNum(username string) int {
 }
 
 func AddNewAnime(anime *repository.Anime) {
-	//var anime repository.Anime
-	//anime.Anid, _ = strconv.Atoi(c.PostForm("Anid"))
-	//anime.Owner = c.PostForm("Owner")
-	//anime.Official_name = c.PostForm("Official_name")
-	//anime.Zh_name = c.PostForm("Zh_name")
-	//anime.Status, _ = strconv.Atoi(c.PostForm("Status"))
 	Db.Create(&anime)
-	//c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": anime})
 }
 
 func UpdateAnime(anime *repository.Anime) {

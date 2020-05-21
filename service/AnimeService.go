@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/antchfx/xmlquery"
 	"github.com/gin-gonic/gin"
@@ -32,7 +33,8 @@ func GetAllAnimes(c *gin.Context) {
 func GetSingleAnime(c *gin.Context) {
 	var anime repository.Anime
 	if VerifyToken(c) {
-		if controller.GetSingleAnime(c.Param("anid"), &anime) {
+		anime.Anid, _ = strconv.Atoi(c.Param("anid"))
+		if controller.GetSingleAnime(&anime) {
 			c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": anime})
 		} else {
 			c.JSON(http.StatusOK, gin.H{"status": http.StatusNotFound})
@@ -104,14 +106,34 @@ func DeleteAnime(c *gin.Context) {
 	}
 }
 
+func GetPublishedInfo(anime *repository.Anime) bool {
+	resp, err := http.Get("https://snow.hacg.top/api.php?anid=" + strconv.Itoa(anime.Anid))
+	err_json := json.NewDecoder(resp.Body).Decode(anime)
+	anime.Status = 2
+	if err != nil || err_json != nil {
+		return false
+	} else {
+		return true
+	}
+}
+
 func SetPublished(c *gin.Context) {
 	var anime repository.Anime
 	var username string
 	if GetTokenUser(c, &username) {
 		anime.Anid, _ = strconv.Atoi(c.Param("anid"))
-		anime.Status = 2
-		controller.UpdateAnime(&anime)
-		c.JSON(http.StatusAccepted, gin.H{"status": http.StatusAccepted})
+		if controller.GetSingleAnime(&anime) {
+			anime.Status = 2
+			controller.UpdateAnime(&anime)
+			c.JSON(http.StatusAccepted, gin.H{"status": http.StatusAccepted})
+		} else {
+			if GetPublishedInfo(&anime) {
+				controller.AddNewAnime(&anime)
+				c.JSON(http.StatusCreated, gin.H{"status": http.StatusAccepted})
+			} else {
+				c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusAccepted})
+			}
+		}
 	} else {
 		c.JSON(http.StatusForbidden, gin.H{"status": http.StatusForbidden})
 	}
