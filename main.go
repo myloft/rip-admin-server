@@ -30,6 +30,7 @@ func main() {
 		v1.PUT("/users/password", service.UpdatePassword)
 		v1.GET("/menus", service.GetAllMenus)
 		v1.GET("/status/:anid", service.SetPublished)
+		v1.GET("/bgmname", service.GetBgmName)
 	}
 	router.Run(":8081")
 }

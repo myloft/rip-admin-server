@@ -144,28 +144,20 @@ type Aidb struct {
 	Zh_name       string
 }
 
-//type Bgm struct {
-//	name string
-//	name_cn string
-//}
-//
-//func GetAnimeInfo(c *gin.Context) {
-//	var bgm Bgm
-//	var aidb Aidb
-//	resp, err := http.Get("https://snow.hacg.top/atob.php?anidb=" + c.Query("aid"))
-//	json.NewDecoder(resp.Body).Decode(&bgm)
-//	aidb.Official_name = bgm.name
-//	aidb.Zh_name = bgm.name_cn
-//	if err != nil {
-//		c.JSON(http.StatusBadGateway, gin.H{"status": http.StatusBadGateway})
-//	} else {
-//		if resp.StatusCode == http.StatusOK {
-//			c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": aidb})
-//		} else if resp.StatusCode == http.StatusNotFound {
-//			c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound})
-//		}
-//	}
-//}
+func GetBgmName(c *gin.Context) {
+	var aidb Aidb
+	resp, err := http.Get("https://snow.hacg.top/atobzh.php?anidb=" + c.Query("aid"))
+	json.NewDecoder(resp.Body).Decode(&aidb)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"status": http.StatusBadGateway})
+	} else {
+		if resp.StatusCode == http.StatusOK {
+			c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": aidb})
+		} else if resp.StatusCode == http.StatusNotFound {
+			c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound})
+		}
+	}
+}
 
 func GetAnimeInfo(c *gin.Context) {
 	var aidb Aidb
