@@ -144,6 +144,29 @@ type Aidb struct {
 	Zh_name       string
 }
 
+//type Bgm struct {
+//	name string
+//	name_cn string
+//}
+//
+//func GetAnimeInfo(c *gin.Context) {
+//	var bgm Bgm
+//	var aidb Aidb
+//	resp, err := http.Get("https://snow.hacg.top/atob.php?anidb=" + c.Query("aid"))
+//	json.NewDecoder(resp.Body).Decode(&bgm)
+//	aidb.Official_name = bgm.name
+//	aidb.Zh_name = bgm.name_cn
+//	if err != nil {
+//		c.JSON(http.StatusBadGateway, gin.H{"status": http.StatusBadGateway})
+//	} else {
+//		if resp.StatusCode == http.StatusOK {
+//			c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": aidb})
+//		} else if resp.StatusCode == http.StatusNotFound {
+//			c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound})
+//		}
+//	}
+//}
+
 func GetAnimeInfo(c *gin.Context) {
 	var aidb Aidb
 	f, err := os.Open("anime-titles.xml")
@@ -151,6 +174,8 @@ func GetAnimeInfo(c *gin.Context) {
 	query := fmt.Sprintf("//anime[@aid='%s']", c.Query("aid"))
 	titles := xmlquery.FindOne(doc, query)
 	if title := titles.SelectElement("//title[@xml:lang='zh-Hans'][@type='official']"); title != nil {
+		aidb.Zh_name = title.InnerText()
+	} else if title := titles.SelectElement("//title[@xml:lang='zh'][@type='official']"); title != nil {
 		aidb.Zh_name = title.InnerText()
 	}
 	if title := titles.SelectElement("//title[@xml:lang='ja']"); title != nil {
