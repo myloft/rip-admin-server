@@ -173,9 +173,14 @@ func GetAnimeInfo(c *gin.Context) {
 	doc, err := xmlquery.Parse(f)
 	query := fmt.Sprintf("//anime[@aid='%s']", c.Query("aid"))
 	titles := xmlquery.FindOne(doc, query)
+	// 优先序列
 	if title := titles.SelectElement("//title[@xml:lang='zh-Hans'][@type='official']"); title != nil {
 		aidb.Zh_name = title.InnerText()
 	} else if title := titles.SelectElement("//title[@xml:lang='zh'][@type='official']"); title != nil {
+		aidb.Zh_name = title.InnerText()
+	} else if title := titles.SelectElement("//title[@xml:lang='zh-Hans']"); title != nil {
+		aidb.Zh_name = title.InnerText()
+	} else if title := titles.SelectElement("//title[@xml:lang='zh']"); title != nil {
 		aidb.Zh_name = title.InnerText()
 	}
 	if title := titles.SelectElement("//title[@xml:lang='ja']"); title != nil {
