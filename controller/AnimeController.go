@@ -42,7 +42,7 @@ func GetSingleAnime(anime *repository.Anime) bool {
 
 func GetUserAnimes(animes *[]repository.Anime, username string, query string, pagenum int, pagesize int, status int) bool {
 	if IsAdmin(username) {
-		username = "*"
+		username = "owner"
 	}
 	if status != 0 {
 		if pagenum != 0 && pagesize != 0 {
