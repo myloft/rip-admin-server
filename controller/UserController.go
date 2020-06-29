@@ -13,6 +13,12 @@ func HavingUser(username string) bool {
 	return true
 }
 
+func IsAdmin(username string) bool {
+	var user repository.User
+	Db.Where("name = ?", username).Find(&user)
+	return *user.Admin
+}
+
 func GetPassword(username string) string {
 	var user repository.User
 	Db.Where("name = ?", username).Find(&user)
