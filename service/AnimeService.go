@@ -3,13 +3,14 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/antchfx/xmlquery"
-	"github.com/gin-gonic/gin"
 	"main/controller"
 	"main/repository"
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/antchfx/xmlquery"
+	"github.com/gin-gonic/gin"
 )
 
 func GetAllAnimes(c *gin.Context) {
@@ -121,7 +122,12 @@ func SetPublished(c *gin.Context) {
 	var anime repository.Anime
 	var username string
 	if GetTokenUser(c, &username) {
-		anime.Anid, _ = strconv.Atoi(c.Param("anid"))
+		var err error
+		anime.Anid, err = strconv.Atoi(c.Param("anid"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest})
+			return
+		}
 		if controller.GetSingleAnime(&anime) {
 			anime.Status = 2
 			controller.UpdateAnime(&anime)
