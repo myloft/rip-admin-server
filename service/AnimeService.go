@@ -49,15 +49,19 @@ func GetUserAnimes(c *gin.Context) {
 	var animes []repository.Anime
 	var username string
 	if GetTokenUser(c, &username) {
-		// 查询数量与页数 无参默认全部
-		query := c.Query("query")
-		pagenum, _ := strconv.Atoi(c.Query("pagenum"))
-		pagesize, _ := strconv.Atoi(c.Query("pagesize"))
-		status, _ := strconv.Atoi(c.Query("status"))
-		if controller.GetUserAnimes(&animes, username, query, pagenum, pagesize, status) {
-			c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": animes, "total": controller.GetUserAnimesNum(username)})
+		if controller.IsAdmin(username) {
+			GetAllAnimes(c)
 		} else {
-			c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound})
+			// 查询数量与页数 无参默认全部
+			query := c.Query("query")
+			pagenum, _ := strconv.Atoi(c.Query("pagenum"))
+			pagesize, _ := strconv.Atoi(c.Query("pagesize"))
+			status, _ := strconv.Atoi(c.Query("status"))
+			if controller.GetUserAnimes(&animes, username, query, pagenum, pagesize, status) {
+				c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": animes, "total": controller.GetUserAnimesNum(username)})
+			} else {
+				c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound})
+			}
 		}
 	}
 }

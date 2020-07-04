@@ -41,9 +41,6 @@ func GetSingleAnime(anime *repository.Anime) bool {
 }
 
 func GetUserAnimes(animes *[]repository.Anime, username string, query string, pagenum int, pagesize int, status int) bool {
-	if IsAdmin(username) {
-		username = "owner"
-	}
 	if status != 0 {
 		if pagenum != 0 && pagesize != 0 {
 			Db.Order("Created_At desc").Limit(pagesize).Offset((pagenum-1)*pagesize).Where("owner = ? AND (anid = ? OR zh_name like ?) AND status = ?", username, query, "%"+query+"%", status).Find(animes).RecordNotFound()
